@@ -1,0 +1,12 @@
+name: TeamEvent
+version: ${project.version}
+main: net.serveron.mcstar.teamevent.TeamEvent
+api-version: 1.16
+commands:
+  ct:
+    usage: /ct
+    description: Team plugin
+permissions:
+  ct.*:
+    description: Gives access to all commands
+    default: op
