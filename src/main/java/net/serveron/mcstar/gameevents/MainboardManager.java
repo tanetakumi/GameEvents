@@ -1,4 +1,4 @@
-package net.serveron.mcstar.gameplugin;
+package net.serveron.mcstar.gameevents;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,6 +15,7 @@ public class MainboardManager {
     public MainboardManager(GameEvent plugin){
         this.plugin = plugin;
     }
+
     public List<String> getCurrentTeams() {
         List<String> list = new ArrayList<>();
         for (Team team : plugin.mainScoreboard.getTeams()) {

@@ -1,4 +1,4 @@
-package net.serveron.mcstar.gameplugin;
+package net.serveron.mcstar.gameevents;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

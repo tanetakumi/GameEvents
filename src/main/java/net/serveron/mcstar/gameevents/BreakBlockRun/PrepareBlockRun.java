@@ -1,22 +1,19 @@
-package net.serveron.mcstar.gameplugin.BreakBlockRun;
+package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameplugin.GameEvent;
-//import org.bukkit.Location;
-import net.serveron.mcstar.gameplugin.TeamInfo;
+import net.serveron.mcstar.gameevents.GameEvent;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class PrepareBlockRun implements Listener {
     private GameEvent plugin;
     private String targetPlayer;
-    //public Location location;
 
     public PrepareBlockRun(GameEvent plugin){
         this.plugin = plugin;
@@ -28,7 +25,8 @@ public class PrepareBlockRun implements Listener {
 
         ItemStack item = new ItemStack(Material.STICK,1);
         ItemMeta im = item.getItemMeta();
-        im.setDisplayName("MagicStick");
+        im.setDisplayName(ChatColor.GOLD+"MagicStick");
+        item.setItemMeta(im);
         player.getInventory().setItem(0,item);
     }
 
@@ -36,10 +34,13 @@ public class PrepareBlockRun implements Listener {
     public void onBlockBreak(BlockBreakEvent e){
         Player player = e.getPlayer();
         if(player.getName().equals(targetPlayer)){
-            if(player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("MagicStick")){
-                //plugin.breakRun.loc = e.getBlock().getLocation();
-                e.setCancelled(true);
-                player.sendMessage("開始位置をセットしました。");
+            ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
+            if(itemMeta!=null && itemMeta.hasDisplayName()){
+                if(itemMeta.getDisplayName().equals(ChatColor.GOLD+"MagicStick")){
+                    plugin.blockRun.locationDecision(e.getBlock().getLocation());
+                    e.setCancelled(true);
+                    player.sendMessage("開始位置をセットしました。");
+                }
             }
         }
     }
@@ -48,6 +49,4 @@ public class PrepareBlockRun implements Listener {
         targetPlayer = null;
         HandlerList.unregisterAll(this);
     }
-
-
 }

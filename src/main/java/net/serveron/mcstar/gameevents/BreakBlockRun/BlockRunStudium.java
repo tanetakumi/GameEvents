@@ -1,6 +1,6 @@
-package net.serveron.mcstar.gameplugin.BreakBlockRun;
+package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameplugin.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;

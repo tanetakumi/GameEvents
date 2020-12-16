@@ -1,12 +1,19 @@
-name: TeamEvent
+name: GameEvents
 version: ${project.version}
-main: net.serveron.mcstar.teamevent.TeamEvent
+main: net.serveron.mcstar.gameevents.GameEvent
 api-version: 1.16
 commands:
-  ct:
-    usage: /ct
-    description: Team plugin
+  cg:
+    usage: /cg
+    description: Custom Game
+  td:
+    usage: /td
+    description: Team Division
+
 permissions:
-  ct.*:
+  cg.*:
+    description: Gives access to all commands
+    default: op
+  td.*:
     description: Gives access to all commands
     default: op

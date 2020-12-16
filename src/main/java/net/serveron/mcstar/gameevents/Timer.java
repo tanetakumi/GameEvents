@@ -1,18 +1,18 @@
-package net.serveron.mcstar.gameplugin.Tag;
+package net.serveron.mcstar.gameevents;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-//import net.serveron.mcstar.teamevent.TeamBattle.TeamBattleListener;
+import net.serveron.mcstar.gameevents.Tag.TagListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class TagActionBar extends BukkitRunnable {
-    private int time;
-    private final TagListener event;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
-    public TagActionBar(TagListener event, int time){
-        this.event = event;
+public class Timer extends BukkitRunnable {
+    private int time;
+    public Timer(int time){
         this.time = time;
     }
     @Override
@@ -29,8 +29,15 @@ public class TagActionBar extends BukkitRunnable {
             }
         }
         else {
-            this.cancel();
-            event.timerFinish();
+            deinitActionbar();
+            triggerAction();
         }
     }
+    public void deinitActionbar(){
+        this.cancel();
+    }
+    public void triggerAction(){
+
+    }
+
 }

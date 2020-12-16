@@ -1,5 +1,6 @@
-package net.serveron.mcstar.gameplugin;
+package net.serveron.mcstar.gameevents.Command;
 
+import net.serveron.mcstar.gameevents.GameEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -7,20 +8,18 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-//import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class GameCommand implements CommandExecutor, TabCompleter {
-
+public class TeamCommand implements CommandExecutor, TabCompleter {
     public GameEvent plugin;
 
-    public GameCommand(GameEvent plugin) {
+    public TeamCommand(GameEvent plugin) {
         this.plugin = plugin;
-        plugin.getCommand("ct").setExecutor(this);
+        plugin.getCommand("td").setExecutor(this);
     }
 
     private void Notify(String text) {
@@ -39,37 +38,10 @@ public class GameCommand implements CommandExecutor, TabCompleter {
         }
         Player player = (Player) sender;
 
-        if(args.length > 0){
-            if(player.hasPermission("ct")) {
+        if(args.length > 0) {
+            if (player.hasPermission("td")) {
                 switch (args[0].toLowerCase()) {
-                    case "gamestart":
-                        if(args.length == 5){
-                            String game = args[1];
-                            int time = stringToInt(args[2]);
-                            TeamInfo team1 = plugin.mainboardManager.extendTeamExists(args[3]);
-                            TeamInfo team2 = plugin.mainboardManager.extendTeamExists(args[4]);
-                            if(time != 0 && team1!=null && team2 != null){
-                                if(!plugin.Start(game,time,team1,team2)){
-                                    player.sendMessage("ゲーム名が違うか、すでにゲームが始まっています。");
-                                }
-                            }
-                            else {
-                                if(team1==null || team2 == null){
-                                    player.sendMessage("カスタムチーム情報が登録されていません");
-                                }
-                                else {
-                                    player.sendMessage("Usage:gamestart <game> <time> <team1> <team2>");
-                                }
 
-                            }
-                        }
-                        else{
-                            player.sendMessage("Usage:gamestart <time> <team1> <team2>");
-                        }
-                        break;
-                    case "gamestop":
-                        plugin.Stop();
-                        break;
                     case "javavsbe":
                         if(args.length == 3){
                             plugin.mainboardManager.JavaVsBE(args[1],args[2]);
@@ -79,8 +51,20 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                             player.sendMessage("引数の数が違います。");
                         }
                         break;
+
+                    case "random":
+                        if(args.length > 2){
+                            plugin.mainboardManager.JavaVsBE(args[1],args[2]);
+                            Bukkit.broadcastMessage("すべてのプレイヤーをランダムに分けました。");
+                        }
+                        else {
+                            player.sendMessage("引数の数が違います。");
+                        }
+                        break;
+
                     case "teaminfo"://これはargs[0]に当たる。
                         if(args.length>1){
+
                             if(args[1].equalsIgnoreCase("remove")){
                                 if(args.length==3){
                                     if(plugin.mainboardManager.removeFromSpawnList(args[2])){
@@ -94,19 +78,19 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                     player.sendMessage("Usage:teaminfo remove <team(x,y,z)>");
                                 }
                             }
+
                             else if(args[1].equalsIgnoreCase("spawn")){
                                 if(args.length==4){
                                     if(plugin.mainboardManager.setRespaenable(args[2],args[3])){
                                         player.sendMessage(args[2]+"を"+args[3]+"にしました。");
-                                    }
-                                    else {
+                                    } else {
                                         player.sendMessage(args[2]+"は存在しません。");
                                     }
-                                }
-                                else{
+                                } else{
                                     player.sendMessage("Usage:teaminfo spawn <team(x,y,z)> <on off>");
                                 }
                             }
+
                             else if(args[1].equalsIgnoreCase("count")){
                                 if(args.length==4){
                                     int i = stringToInt(args[3]);
@@ -119,11 +103,11 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                     else {
                                         player.sendMessage("Usage:teaminfo count <team> <number(>0)>");
                                     }
-                                }
-                                else{
+                                } else{
                                     player.sendMessage("Usage:teaminfo count <team> <number>");
                                 }
                             }
+
                             else if(args[1].equalsIgnoreCase("add")){
                                 if(args.length == 6){
                                     try{
@@ -139,11 +123,11 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                         player.sendMessage(e.getMessage()+"\nteaminfo add <team> <x> <y> <z>");
                                         break;
                                     }
-                                }
-                                else {
+                                } else {
                                     player.sendMessage("引数の数が違います。入力引数長："+args.length+"\nteaminfo add <team> <x> <y> <z>");
                                 }
                             }
+
                             else if(args[1].equalsIgnoreCase("list")){
                                 //player.sendMessage(plugin.tm.PlayerRespawnLocation(player).toString());
                                 String message = "";
@@ -152,6 +136,7 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                 }
                                 player.sendMessage(message);
                             }
+
                             else if(args[1].equalsIgnoreCase("king")){
                                 //player.sendMessage(plugin.tm.PlayerRespawnLocation(player).toString());
                                 if(args.length == 4){
@@ -174,42 +159,22 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                         break;
                 }
             }
-            else {
-                sender.sendMessage("You don't have permisstion");
-            }
         }
-        else {
-            sender.sendMessage("引数が間違っています");
-        }
-        return true;
+        return false;
     }
-
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String command, String[] args) {
         List<String> autoComplete = new ArrayList<>();
-        if(sender.hasPermission("ct")){
+
+        if(sender.hasPermission("td")){
 
             if (args.length == 1){//一段目
-                autoComplete.addAll(Arrays.asList("javavsbe","teaminfo","gamestart","gamestop"));
+                autoComplete.addAll(Arrays.asList("javavsbe","teaminfo"));
             }
+
             else if(args.length >1){//二段目
-                if(args[0].equalsIgnoreCase("gamestart")){
-                    if(args.length == 2){
-                        autoComplete.addAll(Arrays.asList("tag","teambattle"));
-                    }
-                    else if(args.length == 3){
-                        autoComplete.addAll(Arrays.asList("600","900","1200","1800"));
-                    }
-                    else if(args.length == 4){
-                        autoComplete.addAll(plugin.mainboardManager.getCurrentTeams());
-                    }
-                    else if(args.length == 5){
-                        autoComplete.addAll(plugin.mainboardManager.getCurrentTeams());
-                        autoComplete.remove(args[3]);
-                    }
-                }
                 //java vs be コマンド
-                else if (args[0].equalsIgnoreCase("javavsbe")){
+                if (args[0].equalsIgnoreCase("javavsbe")){
                     if(args.length == 2){
                         autoComplete.addAll(plugin.mainboardManager.getCurrentTeams());
                     }
@@ -218,7 +183,7 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                         autoComplete.remove(args[1]);
                     }
                 }
-                //teamspawnpoint
+                //teaminfo
                 else if(args[0].equalsIgnoreCase("teaminfo")){
                     if(args.length == 2){
                         autoComplete.addAll(Arrays.asList("add","remove","list","spawn","king","count"));

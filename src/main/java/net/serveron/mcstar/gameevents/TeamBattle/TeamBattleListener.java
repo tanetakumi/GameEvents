@@ -1,7 +1,7 @@
-package net.serveron.mcstar.gameplugin.TeamBattle;
+package net.serveron.mcstar.gameevents.TeamBattle;
 
-import net.serveron.mcstar.gameplugin.TeamInfo;
-import net.serveron.mcstar.gameplugin.GameEvent;
+import net.serveron.mcstar.gameevents.TeamInfo;
+import net.serveron.mcstar.gameevents.GameEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

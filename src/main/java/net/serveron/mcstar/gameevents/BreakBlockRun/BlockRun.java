@@ -1,27 +1,26 @@
-package net.serveron.mcstar.gameplugin.BreakBlockRun;
+package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameplugin.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.ProgressClass.Progress;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class BlockRun {
+    //Class
     private GameEvent plugin;
     private BlockRunListener blockRunListener;
     private PrepareBlockRun prepareBlockRun;
     private BlockRunStudium blockRunStudium;
 
-    public Location loc;
-
+    //Progress
     public Progress progress = Progress.None;
 
-    public enum Progress{
-        None,
-        PrepareListener,
-        LocationDecision,
-        Construction,
-        Ready,
-        Start,
-    }
+    //GameInfo
+    public Location loc;
+    public int size;
+    public int time;
+
+
 
     public BlockRun(GameEvent plugin){
         this.plugin = plugin;
@@ -37,19 +36,18 @@ public class BlockRun {
         else return false;
     }
 
-    public boolean locationDecision(Location loc){
+    public void locationDecision(Location loc){
         if(progress == Progress.PrepareListener){
             progress = Progress.LocationDecision;
             this.loc = loc;
-            return true;
         }
-        else return false;
     }
 
-    public boolean construction(){
+    public boolean construction(int size){
         if(progress == Progress.LocationDecision){
+            this.size = size;
             blockRunStudium = new BlockRunStudium(plugin);
-            blockRunStudium.constructStudium(loc,20);
+            blockRunStudium.constructStudium(loc, size);
             progress = Progress.Construction;
             return true;
         }
@@ -70,18 +68,25 @@ public class BlockRun {
 
     public boolean ready(){
         if(progress == Progress.Construction){
-            prepareBlockRun.deinitListener();
-            prepareBlockRun = null;
+            if(prepareBlockRun!=null){
+                prepareBlockRun.deinitListener();
+                prepareBlockRun = null;
+            }
             blockRunListener = new BlockRunListener(plugin);
             blockRunListener.register(loc);
+            progress = Progress.Ready;
             return true;
         }
         else return false;
     }
 
     //--------------------------------------------------------------
-    public void onStart(){
-        blockRunListener.initListener();
+    public boolean onStart(){
+        if(progress == Progress.Ready){
+            blockRunListener.initListener();
+            return true;
+        }
+        else return false;
     }
     //--------------------------------------------------------------
     public void onFinish(){

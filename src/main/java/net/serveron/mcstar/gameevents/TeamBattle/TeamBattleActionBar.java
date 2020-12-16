@@ -1,4 +1,4 @@
-package net.serveron.mcstar.gameplugin.TeamBattle;
+package net.serveron.mcstar.gameevents.TeamBattle;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
