@@ -6,20 +6,10 @@ import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class BlockRunStudium {
-    private GameEvent plugin;
-    public boolean construction = false;
-    private int length = 0;
-    private Location startLoc;
-    public BlockRunStudium(GameEvent plugin){
-        this.plugin = plugin;
-    }
 
-    public void constructStudium(Location startLoc,int r){
+
+    public void constructStudium(GameEvent plugin,Location startLoc,int r){
         if(r<10)return ;
-
-        construction = true;
-        length = r;
-        this.startLoc = startLoc;
 
         new BukkitRunnable(){
             private int i = 0;
@@ -69,11 +59,25 @@ public class BlockRunStudium {
         }.runTaskTimer(plugin,5,20);
     }
 
-    public void deConstructStudium(){
-        construction = false;
+    public void downsizeStudium(Location startLoc,int r){
+        for (int i = 1; i < r - 1; i++) {
+            Location l = startLoc.clone().add(i, 5, 1);
+            l.getBlock().setType(Material.AIR);
+            Location l2 = startLoc.clone().add(i, 5, r-1);
+            l2.getBlock().setType(Material.AIR);
+        }
+        for (int k = 1; k < r - 1; k++) {
+            Location l = startLoc.clone().add(1, 5, k);
+            l.getBlock().setType(Material.AIR);
+            Location l2 = startLoc.clone().add(r-1, 5, k);
+            l2.getBlock().setType(Material.AIR);
+        }
+    }
+
+    public void deConstructStudium(Location startLoc,int r){
         for(int j=0;j<10;j++){
-            for(int i=0;i<length;i++){
-                for(int k=0;k<length;k++){
+            for(int i=0;i<r;i++){
+                for(int k=0;k<r;k++){
                     Location l = startLoc.clone().add(i,j,k);
                     l.getBlock().setType(Material.AIR);
                 }

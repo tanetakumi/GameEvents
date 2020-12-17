@@ -19,36 +19,33 @@ public class BlockRunListener implements Listener {
     private final GameEvent plugin;
     private List<String> entryPlayer= new ArrayList<>();
     private boolean listenable = false;
-
-
-
+    private BlockRunInfo gameInfo;
 
     public BlockRunListener(GameEvent plugin){
         this.plugin = plugin;
     }
 
-    public void register(Location startLoc){
-
-        int startX = startLoc.getBlockX();
-        int startY = startLoc.getBlockY();
-        int startZ = startLoc.getBlockZ();
-        int size = plugin.blockRun.size;
+    public void registerPlayer(BlockRunInfo gameInfo){
+        this.gameInfo = gameInfo;
+        Location startPos = gameInfo.stageLoc.clone().add((double)gameInfo.stageSize/2,6,(double)gameInfo.stageSize/2);
         for(Player p : Bukkit.getOnlinePlayers()){
-            int x = p.getLocation().getBlockX();
-            int y = p.getLocation().getBlockY();
-            int z = p.getLocation().getBlockZ();
-            if(startX<x && x<startX+size && startY<y && y<startY+10 && startZ<z && z<startZ+size) {
+            if(gameInfo.team.hasEntry(p.getName())){
                 entryPlayer.add(p.getName());
+                p.teleport(startPos);
             }
-            p.sendMessage("ゲームに参加します。");
         }
-        Bukkit.broadcastMessage(entryPlayer.size()+"人参加します。");
-
+        Bukkit.broadcastMessage(entryPlayer.size()+"人参加");
     }
+
+
     //ゲーム----------------------------------------------------------------------------------------------
     public void initListener(){
         if(!listenable){
             plugin.getServer().getPluginManager().registerEvents(this, plugin);
+            for(Player p : Bukkit.getOnlinePlayers()){
+                p.sendTitle(ChatColor.AQUA+"ブロックランバトルロワイヤル", "ゲーム開始",20,50,20);
+            }
+            gameInfo.downsizeStage();
             listenable = true;
         }
     }

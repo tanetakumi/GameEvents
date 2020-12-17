@@ -46,6 +46,15 @@ public final class GameEvent extends JavaPlugin {
             blockRun.onStart();
             blockRun = null;
         }
-        //if(milkListener!=null)milkListener.deinitListener();
+    }
+
+    public String currentGame(){
+        if(tag!=null){
+            return "tag";
+        } else if(blockRun!=null){
+            return "blockrun";
+        } else {
+            return "none";
+        }
     }
 }

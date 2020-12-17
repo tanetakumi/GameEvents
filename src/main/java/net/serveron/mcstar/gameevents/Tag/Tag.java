@@ -1,7 +1,6 @@
 package net.serveron.mcstar.gameevents.Tag;
 
 import net.serveron.mcstar.gameevents.GameEvent;
-import net.serveron.mcstar.gameevents.ProgressClass.Progress;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
@@ -14,22 +13,21 @@ public class Tag {
     private PrepareTag prepareTag;
 
     //Progress
-    public Progress progress = Progress.None;
+    public int progress = 0;
 
     //GameInfo
-    public TagInfo tagInfo = new TagInfo();
+    public TagInfo tagInfo;
 
     public Tag(GameEvent plugin){
         this.plugin = plugin;
+        tagInfo = new TagInfo(plugin);
     }
 
-    public boolean prepare(Player player, List<Team> teamList){
-        if(progress == Progress.None){
+    public boolean prepare(Player player){
+        if(progress == 0){
             prepareTag = new PrepareTag(plugin);
             prepareTag.initListener(player);
-            tagInfo.taggerTeam = teamList.get(0);
-            tagInfo.escapeTeam = teamList.get(1);
-            progress = Progress.Construction;
+            progress = 1;
             return true;
         } else {
             return false;
@@ -37,14 +35,14 @@ public class Tag {
     }
 
     public boolean ready(){
-        if(progress == Progress.Construction){
+        if(progress == 1){
             if(tagInfo.startable()){
                 if(tagListener!=null){
                     tagListener.deinitListener();
                     tagListener = null;
                 }
                 tagListener = new TagListener(plugin);
-                progress = Progress.Ready;
+                progress = 2;
                 return true;
             } else {
                 return false;
@@ -56,7 +54,7 @@ public class Tag {
 
     //--------------------------------------------------------------
     public boolean onStart(){
-        if(progress == Progress.Ready){
+        if(progress == 2){
             tagListener.initListener(tagInfo);
             return true;
         } else {
@@ -73,6 +71,6 @@ public class Tag {
             prepareTag.deinitListener();
             prepareTag = null;
         }
-        progress = Progress.None;
+        progress = 0;
     }
 }

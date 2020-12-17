@@ -39,7 +39,8 @@ public class PrepareBlockRun implements Listener {
                 if(itemMeta.getDisplayName().equals(ChatColor.GOLD+"MagicStick")){
                     plugin.blockRun.locationDecision(e.getBlock().getLocation());
                     e.setCancelled(true);
-                    player.sendMessage("開始位置をセットしました。");
+                    player.sendMessage("開始位置をセットしました。ステージ作成コマンド\n"
+                            +"　/cg blockrun construct <長さ>");
                 }
             }
         }

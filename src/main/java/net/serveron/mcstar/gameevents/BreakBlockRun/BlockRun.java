@@ -1,7 +1,6 @@
 package net.serveron.mcstar.gameevents.BreakBlockRun;
 
 import net.serveron.mcstar.gameevents.GameEvent;
-import net.serveron.mcstar.gameevents.ProgressClass.Progress;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -10,16 +9,12 @@ public class BlockRun {
     private GameEvent plugin;
     private BlockRunListener blockRunListener;
     private PrepareBlockRun prepareBlockRun;
-    private BlockRunStudium blockRunStudium;
 
     //Progress
-    public Progress progress = Progress.None;
+    public int progress = 0;
 
     //GameInfo
-    public Location loc;
-    public int size;
-    public int time;
-
+    public BlockRunInfo blockRunInfo;
 
 
     public BlockRun(GameEvent plugin){
@@ -27,62 +22,65 @@ public class BlockRun {
     }
 
     public boolean prepare(Player player){
-        if(progress == Progress.None){
+        if(progress == 0){
             prepareBlockRun = new PrepareBlockRun(plugin);
             prepareBlockRun.initListener(player);
-            progress = Progress.PrepareListener;
+            progress = 1;
             return true;
         }
         else return false;
     }
 
     public void locationDecision(Location loc){
-        if(progress == Progress.PrepareListener){
-            progress = Progress.LocationDecision;
-            this.loc = loc;
+        if(progress == 1 || progress == 2){
+            blockRunInfo.stageLoc = loc;
+            progress = 2;
         }
     }
 
     public boolean construction(int size){
-        if(progress == Progress.LocationDecision){
-            this.size = size;
-            blockRunStudium = new BlockRunStudium(plugin);
-            blockRunStudium.constructStudium(loc, size);
-            progress = Progress.Construction;
-            return true;
+        if(progress == 2){
+            blockRunInfo.stageSize = size;
+            if(blockRunInfo.constructStage()){
+                progress = 3;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
-        else return false;
     }
 
     public boolean deConstruction(){
-        if(progress != Progress.Start && progress != Progress.Ready){
-            if(blockRunStudium!=null && blockRunStudium.construction){
-                blockRunStudium.deConstructStudium();
-                progress = Progress.PrepareListener;
-                return true;
-            }
-            else return false;
+        if(progress == 3){
+            blockRunInfo.deConstructStage();
+            progress = 2;
+            return true;
+        } else {
+            return false;
         }
-        else return false;
     }
 
     public boolean ready(){
-        if(progress == Progress.Construction){
-            if(prepareBlockRun!=null){
+        if(progress == 3){
+            if(blockRunInfo.startable()){
                 prepareBlockRun.deinitListener();
                 prepareBlockRun = null;
+                blockRunListener = new BlockRunListener(plugin);
+                blockRunListener.registerPlayer(blockRunInfo);
+                progress = 4;
+                return true;
+            } else{
+                return false;
             }
-            blockRunListener = new BlockRunListener(plugin);
-            blockRunListener.register(loc);
-            progress = Progress.Ready;
-            return true;
         }
         else return false;
     }
 
     //--------------------------------------------------------------
     public boolean onStart(){
-        if(progress == Progress.Ready){
+        if(progress == 4){
             blockRunListener.initListener();
             return true;
         }
@@ -90,10 +88,6 @@ public class BlockRun {
     }
     //--------------------------------------------------------------
     public void onFinish(){
-        if(blockRunStudium!=null && blockRunStudium.construction){
-            blockRunStudium.deConstructStudium();
-            blockRunStudium = null;
-        }
         if(blockRunListener!=null) {
             blockRunListener.deinitListener();
             blockRunListener = null;
@@ -102,6 +96,10 @@ public class BlockRun {
             prepareBlockRun.deinitListener();
             prepareBlockRun = null;
         }
-        progress = Progress.None;
+        if(blockRunInfo!=null){
+            blockRunInfo.deConstructStage();
+            prepareBlockRun = null;
+        }
+        progress = 0;
     }
 }

@@ -79,42 +79,35 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                             break;
                         }*/
                         break;
-                    case "tag"://args[0]
-                        if (plugin.tag == null) {
-                            if (args[1].equalsIgnoreCase("prepare") && args.length == 4) {//args[1]
-                                List<Team> teamList = argsToTeamList(2,args);
-                                if(teamList!=null && teamList.size()==2){
-                                    plugin.tag = new Tag(plugin);
-                                    if(plugin.tag.prepare(player,teamList)){
-                                        player.sendMessage("準備を開始します");
-                                    } else {
-                                        plugin.tag = null;
-                                        player.sendMessage("エラーが起きました");
-                                    }
-                                } else {
-                                    player.sendMessage("チームデータがありません");
-                                }
+
+
+
+                    case "tag":
+                        if (plugin.currentGame().equals("none")) {
+                            if (args.length == 2 && args[1].equalsIgnoreCase("1.prepare")) {
+                                plugin.tag = new Tag(plugin);
+                                player.sendMessage("鬼ごっこの準備をします。最初のコマンド↓\n"
+                                                +"/cg tag 2.set <時間(秒)> <鬼チーム> <逃走チーム>");
                             } else {
-                                player.sendMessage("Usage: prepare <tagger team> <escape team>");
+                                player.sendMessage("コマンド /cg tag 1.prepare");
                             }
-                        } else {
+                        } else if(plugin.currentGame().equals("tag")){
                             switch (args[1].toLowerCase()) {
-                                case "ready":
-                                    if (args.length == 3) {
-                                        int time = stringToInt(args[2]);
-                                        if (time != 0) {
-                                            plugin.tag.tagInfo.gameTime = time;
-                                            if(plugin.blockRun.ready()){
-                                                player.sendMessage("準備ができました");
-                                            } else {
-                                                player.sendMessage("準備が完了していません");
-                                            }
+                                case "set":
+                                    if(args.length==5){
+                                        if(plugin.tag.tagInfo.setInfo(args)){
+                                            player.sendMessage("次に鬼のリス位置を決めます。’おにのスポーン位置’の棒を持ちブロックを壊してください。");
                                         } else {
-                                            player.sendMessage("数値を入力してください");
+                                            player.sendMessage("コマンドエラー");
                                         }
                                     } else {
-                                        player.sendMessage("Usage: construct <length>");
+                                        player.sendMessage("引数の数が違います。");
                                     }
+                                case "ready":
+                                    if(plugin.tag.ready()){
+                                        player.sendMessage("準備完了");
+                                    }
+
                                     break;
                                 case "start":
                                     if (plugin.tag.onStart()) {
@@ -131,50 +124,62 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                 default:
                                     break;
                             }
+                        } else {
+                            player.sendMessage("現在ほかのゲームが開始されています。");
                         }
 
                     case "blockrun":
-                        if (plugin.blockRun == null) {
-                            if (args[1].equalsIgnoreCase("prepare")) {
+                        if (plugin.currentGame().equals("none")) {
+                            if (args.length == 2 && args[1].equalsIgnoreCase("prepare")) {
                                 plugin.blockRun = new BlockRun(plugin);
                                 plugin.blockRun.prepare(player);
+                                player.sendMessage("ブロックランの準備をします。最初のコマンド↓\n"
+                                        +"/cg blockrun set <参加者のチーム>");
+                            } else {
+                                player.sendMessage("コマンド /cg blockrun prepare");
                             }
-                        } else {
+                        } else if(plugin.currentGame().equals("blockrun")){
                             switch (args[1].toLowerCase()) {
+                                case "set":
+                                    if(args.length == 3){
+                                        if(plugin.blockRun.blockRunInfo.setInfo(args)){
+                                            player.sendMessage("次にステージの建設位置を棒で選択して下さい。\n" +
+                                                    "コマンド /cg blockrun construct <大きさ>　で建設できます。");
+                                        } else {
+                                            player.sendMessage("コマンド /cg blockrun set <参加者のチーム>");
+                                        }
+                                    } else {
+                                        player.sendMessage("引数の数が違います。");
+                                    }
+                                    break;
                                 case "construct":
                                     if (args.length == 3) {
                                         int r = stringToInt(args[2]);
                                         if (r != 0) {
                                             if (plugin.blockRun.construction(r)) {
-                                                player.sendMessage("ゲーム場を作成しました");
+                                                player.sendMessage("ステージを作成しました");
                                             } else {
-                                                player.sendMessage("ゲーム場を作成できませんでした");
+                                                player.sendMessage("ステージを作成できませんでした");
                                             }
                                         } else {
                                             player.sendMessage("数値を入力してください");
                                         }
                                     } else {
-                                        player.sendMessage("Usage: construct <length>");
+                                        player.sendMessage("コマンド /cg blockrun construct <大きさ>");
                                     }
                                     break;
                                 case "deconstruct":
                                     if (plugin.blockRun.deConstruction()) {
-                                        player.sendMessage("ゲーム場を解体しました");
+                                        player.sendMessage("ステージを解体しました");
                                     } else {
-                                        player.sendMessage("ゲーム場を解体できませんでした");
+                                        player.sendMessage("ステージを解体できませんでした");
                                     }
                                     break;
                                 case "ready":
-                                    if (args.length == 3) {
-                                        int time = stringToInt(args[2]);
-                                        if (time != 0) {
-                                            plugin.blockRun.ready();
-                                            player.sendMessage("ゲーム時間を" + time + "秒に設定しました。");
-                                        } else {
-                                            player.sendMessage("数値を入力してください");
-                                        }
+                                    if(plugin.blockRun.ready()){
+                                        player.sendMessage("準備完了");
                                     } else {
-                                        player.sendMessage("Usage: construct <length>");
+                                        player.sendMessage("準備が整っていません。");
                                     }
                                     break;
                                 case "start":
@@ -214,39 +219,33 @@ public class GameCommand implements CommandExecutor, TabCompleter {
             else if(args.length >1){//二段目
                 if(args[0].equalsIgnoreCase("tag") || args[0].equalsIgnoreCase("teambattle") ){
                     if(args.length == 2){
-                        autoComplete.addAll(Arrays.asList("ready","start","stop"));
+                        autoComplete.addAll(Arrays.asList("prepare","set","ready","start","finish"));
                     }
-                    else if(args.length == 3){
-                        if(args[1].equalsIgnoreCase("ready")){
+                    else if(args[1].equalsIgnoreCase("set")){
+                        if(args.length == 3){
                             autoComplete.addAll(Arrays.asList("600","900","1200","1800"));
-                        }
-                        else if(args[1].equalsIgnoreCase("start")){
+                        } else if(args.length == 4){
                             autoComplete.addAll(plugin.mainboardManager.getCurrentTeams());
-                        }
-                    }
-                    else if(args.length == 4){
-                        if(args[1].equalsIgnoreCase("start")){
+                        } else if(args.length == 5){
                             autoComplete.addAll(plugin.mainboardManager.getCurrentTeams());
-                            autoComplete.remove(args[2]);
+                            autoComplete.remove(args[3]);
                         }
-
                     }
                 } else if(args[0].equalsIgnoreCase("blockrun")){
                     if(args.length == 2){
-                        autoComplete.addAll(Arrays.asList("prepare","construct","deconstruct","ready","start","finish"));
-                    }
-                    else if(args.length == 3){
-                        if(args[1].equalsIgnoreCase("ready")){
-                            autoComplete.addAll(Arrays.asList("600","900","1200","1800"));
+                        autoComplete.addAll(Arrays.asList("prepare","set","construct","deconstruct","ready","start","finish"));
+                    } else if(args.length == 3){
+                        if(args[1].equalsIgnoreCase("set")){
+                            autoComplete.addAll(plugin.mainboardManager.getCurrentTeams());
                         } else if(args[1].equalsIgnoreCase("construct")){
-                            autoComplete.addAll(Arrays.asList("20","25","30"));
+                            autoComplete.addAll(Arrays.asList("30","35","40"));
                         }
                     }
                 }
             }
         }
         //文字比較と削除-----------------------------------------------------
-        Collections.sort(autoComplete);
+        //Collections.sort(autoComplete);
         autoComplete.removeIf(str -> !str.startsWith(args[args.length - 1]));
         //------------------------------------------------------
         return autoComplete;
