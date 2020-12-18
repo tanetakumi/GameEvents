@@ -75,7 +75,7 @@ public class TagListener implements Listener {
             if(playerList.contains(whoHit.getName())){
                 setWhoWasHit(whoWasHit);
                 setWhoHit(whoHit);
-                Bukkit.broadcastMessage("鬼が"+whoHit.getName()+"から"+whoWasHit+"に変わりました。");
+                Bukkit.broadcastMessage("鬼が"+whoHit.getName()+"から"+whoWasHit.getName()+"に変わりました。");
             }
         }
     }

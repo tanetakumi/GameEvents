@@ -86,7 +86,7 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                 plugin.tag = new Tag(plugin);
                                 plugin.tag.prepare(player);
                                 player.sendMessage("鬼ごっこの準備をします。最初のコマンド↓\n"
-                                                +"/cg tag 2.set <時間(秒)> <鬼チーム> <逃走チーム>");
+                                                +"/cg tag set <時間(秒)> <鬼チーム> <逃走チーム>");
                             } else {
                                 player.sendMessage("コマンド /cg tag prepare");
                             }
@@ -102,6 +102,7 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                     } else {
                                         player.sendMessage("引数の数が違います。");
                                     }
+                                    break;
                                 case "ready":
                                     if(plugin.tag.ready()){
                                         player.sendMessage("準備完了");
