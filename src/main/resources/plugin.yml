@@ -1,6 +1,6 @@
 name: GameEvents
 version: ${project.version}
-main: net.serveron.mcstar.gameevents.GameEvent
+main: net.serveron.mcstar.gameevents.GameEvents
 api-version: 1.16
 commands:
   cg:

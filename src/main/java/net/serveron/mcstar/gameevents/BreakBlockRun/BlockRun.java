@@ -1,12 +1,12 @@
 package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class BlockRun {
     //Class
-    private GameEvent plugin;
+    private final GameEvents plugin;
     private BlockRunListener blockRunListener;
     private PrepareBlockRun prepareBlockRun;
 
@@ -17,8 +17,10 @@ public class BlockRun {
     public BlockRunInfo blockRunInfo;
 
 
-    public BlockRun(GameEvent plugin){
+    public BlockRun(GameEvents plugin){
+
         this.plugin = plugin;
+        blockRunInfo = new BlockRunInfo(plugin);
     }
 
     public boolean prepare(Player player){

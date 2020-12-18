@@ -1,7 +1,7 @@
 package net.serveron.mcstar.gameevents.TeamBattle;
 
+import net.serveron.mcstar.gameevents.GameEvents;
 import net.serveron.mcstar.gameevents.TeamInfo;
-import net.serveron.mcstar.gameevents.GameEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ import org.bukkit.scoreboard.Score;
 
 public class TeamBattleListener implements Listener {
 
-    private final GameEvent plugin;
+    private final GameEvents plugin;
     private TeamInfo team1;
     private TeamInfo team2;
 
@@ -29,7 +29,7 @@ public class TeamBattleListener implements Listener {
     public Score score1;
     public Score score2;
 
-    public TeamBattleListener(GameEvent plugin) {
+    public TeamBattleListener(GameEvents plugin) {
         this.plugin = plugin;
     }
 

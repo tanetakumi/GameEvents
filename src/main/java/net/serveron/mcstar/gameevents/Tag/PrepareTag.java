@@ -1,6 +1,6 @@
 package net.serveron.mcstar.gameevents.Tag;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,12 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class PrepareTag implements Listener {
-    private GameEvent plugin;
+    private final GameEvents plugin;
     private String targetPlayer;
 
-    public PrepareTag(GameEvent plugin){
+    public PrepareTag(GameEvents plugin){
         this.plugin = plugin;
     }
+
     public void initListener(Player player){
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         this.targetPlayer = player.getName();

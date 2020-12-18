@@ -1,8 +1,7 @@
 package net.serveron.mcstar.gameevents.Tag;
 
-import net.serveron.mcstar.gameevents.TeamInfo;
 //import net.serveron.mcstar.teamevent.PlayTag.ActionBar;
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import net.serveron.mcstar.gameevents.Timer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -13,18 +12,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 //import org.bukkit.event.entity.PlayerDeathEvent;
 //import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
+        import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Team;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 import java.util.List;
 
 public class TagListener implements Listener {
 
-    private final GameEvent plugin;
+    private final GameEvents plugin;
     private Timer actionBar;
     public Objective obj;
     private boolean listenable = false;
@@ -34,7 +31,7 @@ public class TagListener implements Listener {
     public List<Score> scoreList = new ArrayList<>();
     public List<String> playerList = new ArrayList<>();
 
-    public TagListener(GameEvent plugin) {
+    public TagListener(GameEvents plugin) {
         this.plugin = plugin;
     }
 

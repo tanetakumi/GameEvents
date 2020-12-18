@@ -1,6 +1,6 @@
 package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,12 +16,12 @@ import java.util.List;
 
 
 public class BlockRunListener implements Listener {
-    private final GameEvent plugin;
-    private List<String> entryPlayer= new ArrayList<>();
+    private final GameEvents plugin;
+    private final List<String> entryPlayer= new ArrayList<>();
     private boolean listenable = false;
     private BlockRunInfo gameInfo;
 
-    public BlockRunListener(GameEvent plugin){
+    public BlockRunListener(GameEvents plugin){
         this.plugin = plugin;
     }
 

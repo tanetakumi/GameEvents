@@ -1,6 +1,6 @@
 package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class BlockRunStudium {
 
 
-    public void constructStudium(GameEvent plugin,Location startLoc,int r){
+    public void constructStudium(GameEvents plugin, Location startLoc, int r){
         if(r<10)return ;
 
         new BukkitRunnable(){

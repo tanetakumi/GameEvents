@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainboardManager {
-    public GameEvent plugin;
+    public GameEvents plugin;
 
-    public MainboardManager(GameEvent plugin){
+    public MainboardManager(GameEvents plugin){
         this.plugin = plugin;
     }
 

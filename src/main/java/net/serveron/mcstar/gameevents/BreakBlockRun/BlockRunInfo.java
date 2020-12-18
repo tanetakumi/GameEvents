@@ -1,13 +1,13 @@
 package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.Location;
 import org.bukkit.scoreboard.Team;
 
 //import javax.xml.stream.Location;
 
 public class BlockRunInfo {
-    public GameEvent plugin;
+    public GameEvents plugin;
 
 
     public Location stageLoc;
@@ -15,7 +15,7 @@ public class BlockRunInfo {
     public boolean stage = false;
     public Team team;
 
-    public BlockRunInfo(GameEvent plugin){
+    public BlockRunInfo(GameEvents plugin){
         this.plugin = plugin;
 
     }
@@ -45,18 +45,10 @@ public class BlockRunInfo {
 
     public boolean setInfo(String[] args){
         team = plugin.mainScoreboard.getTeam(args[2]);
-        if(team != null){
-            return true;
-        } else {
-            return false;
-        }
+        return team != null;
     }
 
     public boolean startable(){
-        if(team!=null && stage && stageSize!=0 && stageLoc!=null){
-            return true;
-        } else{
-            return false;
-        }
+        return team != null && stage && stageSize != 0 && stageLoc != null;
     }
 }

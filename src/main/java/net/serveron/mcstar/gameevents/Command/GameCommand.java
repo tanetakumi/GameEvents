@@ -1,9 +1,8 @@
 package net.serveron.mcstar.gameevents.Command;
 
 import net.serveron.mcstar.gameevents.BreakBlockRun.BlockRun;
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import net.serveron.mcstar.gameevents.Tag.Tag;
-import net.serveron.mcstar.gameevents.TeamInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
@@ -13,14 +12,13 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class GameCommand implements CommandExecutor, TabCompleter {
 
-    public GameEvent plugin;
+    public GameEvents plugin;
 
-    public GameCommand(GameEvent plugin) {
+    public GameCommand(GameEvents plugin) {
         this.plugin = plugin;
         plugin.getCommand("cg").setExecutor(this);
     }
@@ -84,12 +82,13 @@ public class GameCommand implements CommandExecutor, TabCompleter {
 
                     case "tag":
                         if (plugin.currentGame().equals("none")) {
-                            if (args.length == 2 && args[1].equalsIgnoreCase("1.prepare")) {
+                            if (args.length == 2 && args[1].equalsIgnoreCase("prepare")) {
                                 plugin.tag = new Tag(plugin);
+                                plugin.tag.prepare(player);
                                 player.sendMessage("鬼ごっこの準備をします。最初のコマンド↓\n"
                                                 +"/cg tag 2.set <時間(秒)> <鬼チーム> <逃走チーム>");
                             } else {
-                                player.sendMessage("コマンド /cg tag 1.prepare");
+                                player.sendMessage("コマンド /cg tag prepare");
                             }
                         } else if(plugin.currentGame().equals("tag")){
                             switch (args[1].toLowerCase()) {
@@ -197,6 +196,8 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                 default:
                                     break;
                             }
+                        } else {
+                            player.sendMessage("現在ほかのゲームが開始されています。");
                         }
                 }
             } else {

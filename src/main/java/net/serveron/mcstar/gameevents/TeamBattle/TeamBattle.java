@@ -1,9 +1,12 @@
-package net.serveron.mcstar.gameevents.Tag;
+package net.serveron.mcstar.gameevents.TeamBattle;
 
 import net.serveron.mcstar.gameevents.GameEvents;
+import net.serveron.mcstar.gameevents.Tag.PrepareTag;
+import net.serveron.mcstar.gameevents.Tag.TagInfo;
+import net.serveron.mcstar.gameevents.Tag.TagListener;
 import org.bukkit.entity.Player;
 
-public class Tag {
+public class TeamBattle {
     //Class
     private final GameEvents plugin;
     private TagListener tagListener;
@@ -15,7 +18,7 @@ public class Tag {
     //GameInfo
     public TagInfo tagInfo;
 
-    public Tag(GameEvents plugin){
+    public TeamBattle(GameEvents plugin){
         this.plugin = plugin;
         tagInfo = new TagInfo(plugin);
     }

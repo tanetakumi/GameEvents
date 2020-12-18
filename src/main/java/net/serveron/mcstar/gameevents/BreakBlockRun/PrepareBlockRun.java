@@ -1,6 +1,6 @@
 package net.serveron.mcstar.gameevents.BreakBlockRun;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,10 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class PrepareBlockRun implements Listener {
-    private GameEvent plugin;
+    private final GameEvents plugin;
     private String targetPlayer;
 
-    public PrepareBlockRun(GameEvent plugin){
+    public PrepareBlockRun(GameEvents plugin){
         this.plugin = plugin;
     }
 

@@ -15,7 +15,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GameEvent extends JavaPlugin {
+public final class GameEvents extends JavaPlugin {
 
     public MainboardManager mainboardManager;
     public Scoreboard mainScoreboard;

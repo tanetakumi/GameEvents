@@ -1,6 +1,6 @@
 package net.serveron.mcstar.gameevents.Command;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,9 +15,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class TeamCommand implements CommandExecutor, TabCompleter {
-    public GameEvent plugin;
+    public GameEvents plugin;
 
-    public TeamCommand(GameEvent plugin) {
+    public TeamCommand(GameEvents plugin) {
         this.plugin = plugin;
         plugin.getCommand("td").setExecutor(this);
     }

@@ -1,13 +1,13 @@
 package net.serveron.mcstar.gameevents.ClimbHigh;
 
-import net.serveron.mcstar.gameevents.GameEvent;
+import net.serveron.mcstar.gameevents.GameEvents;
 import org.bukkit.event.Listener;
 
 public class ClimbListener implements Listener {
 
-    private final GameEvent plugin;
+    private final GameEvents plugin;
 
-    public ClimbListener(GameEvent plugin){
+    public ClimbListener(GameEvents plugin){
         this.plugin = plugin;
     }
 
