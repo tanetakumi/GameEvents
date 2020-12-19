@@ -25,7 +25,7 @@ public class PrepareBlockRun implements Listener {
 
         ItemStack item = new ItemStack(Material.STICK,1);
         ItemMeta im = item.getItemMeta();
-        im.setDisplayName(ChatColor.GOLD+"MagicStick");
+        im.setDisplayName(ChatColor.GOLD+"ステージ場所");
         item.setItemMeta(im);
         player.getInventory().setItem(0,item);
     }
@@ -36,7 +36,7 @@ public class PrepareBlockRun implements Listener {
         if(player.getName().equals(targetPlayer)){
             ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
             if(itemMeta!=null && itemMeta.hasDisplayName()){
-                if(itemMeta.getDisplayName().equals(ChatColor.GOLD+"MagicStick")){
+                if(itemMeta.getDisplayName().equals(ChatColor.GOLD+"ステージ場所")){
                     plugin.blockRun.locationDecision(e.getBlock().getLocation());
                     e.setCancelled(true);
                     player.sendMessage("開始位置をセットしました。ステージ作成コマンド\n"
