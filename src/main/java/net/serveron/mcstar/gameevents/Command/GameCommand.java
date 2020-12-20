@@ -1,6 +1,7 @@
 package net.serveron.mcstar.gameevents.Command;
 
 import net.serveron.mcstar.gameevents.BreakBlockRun.BlockRun;
+import net.serveron.mcstar.gameevents.Escaping.Escaping;
 import net.serveron.mcstar.gameevents.GameEvents;
 import net.serveron.mcstar.gameevents.Tag.Tag;
 import org.bukkit.Bukkit;
@@ -106,8 +107,9 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                 case "ready":
                                     if(plugin.tag.ready()){
                                         player.sendMessage("準備完了");
+                                    } else {
+                                        player.sendMessage("準備が完了していません");
                                     }
-
                                     break;
                                 case "start":
                                     if (plugin.tag.onStart()) {
@@ -127,7 +129,57 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                         } else {
                             player.sendMessage("現在ほかのゲームが開始されています。");
                         }
+                        break;
+                    case "escaping":
+                        if (plugin.currentGame().equals("none")) {
+                            if (args.length == 2 && args[1].equalsIgnoreCase("prepare")){
+                                plugin.escaping = new Escaping(plugin);
+                                plugin.escaping.prepare(player);
+                                player.sendMessage("逃走中の準備をします。最初のコマンド↓\n"
+                                        +"/cg escaping set <時間(秒)> <鬼チーム> <逃走チーム>");
+                            } else {
+                                player.sendMessage("コマンド /cg escaping prepare");
+                            }
+                        } else if(plugin.currentGame().equals("escaping")){
+                            switch (args[1].toLowerCase()) {
+                                case "set":
+                                    if(args.length==5){
+                                        if(plugin.escaping.escapingInfo.setInfo(args)){
+                                            player.sendMessage("次にハンターのリス位置と捕獲者のリス位置を決めます。棒を持ちブロックを壊してください。");
+                                        } else {
+                                            player.sendMessage("コマンドエラー");
+                                        }
+                                    } else {
+                                        player.sendMessage("引数の数が違います。");
+                                    }
+                                    break;
+                                case "ready":
+                                    if(plugin.escaping.ready()){
+                                        player.sendMessage("準備完了");
+                                    } else {
+                                        player.sendMessage("準備が完了していません");
+                                    }
 
+                                    break;
+                                case "start":
+                                    if (plugin.escaping.onStart()) {
+                                        player.sendMessage("ゲームを開始しました");
+                                    } else {
+                                        player.sendMessage("ゲームを開始できませんでした");
+                                    }
+                                    break;
+                                case "finish":
+                                    plugin.escaping.onFinish();
+                                    plugin.escaping = null;
+                                    player.sendMessage("ゲームを終了しました");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            player.sendMessage("現在ほかのゲームが開始されています。");
+                        }
+                        break;
                     case "blockrun":
                         if (plugin.currentGame().equals("none")) {
                             if (args.length == 2 && args[1].equalsIgnoreCase("prepare")) {
@@ -200,6 +252,7 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                         } else {
                             player.sendMessage("現在ほかのゲームが開始されています。");
                         }
+                        break;
                 }
             } else {
                 player.sendMessage("You don't have permisstion");
@@ -216,10 +269,10 @@ public class GameCommand implements CommandExecutor, TabCompleter {
         if(sender.hasPermission("cg")){
 
             if (args.length == 1){//一段目
-                autoComplete.addAll(Arrays.asList("tag","teambattle","blockrun"));
+                autoComplete.addAll(Arrays.asList("tag","teambattle","blockrun","escaping"));
             }
             else if(args.length >1){//二段目
-                if(args[0].equalsIgnoreCase("tag") || args[0].equalsIgnoreCase("teambattle") ){
+                if(args[0].equalsIgnoreCase("tag") ||args[0].equalsIgnoreCase("escaping") || args[0].equalsIgnoreCase("teambattle") ){
                     if(args.length == 2){
                         autoComplete.addAll(Arrays.asList("prepare","set","ready","start","finish"));
                     }

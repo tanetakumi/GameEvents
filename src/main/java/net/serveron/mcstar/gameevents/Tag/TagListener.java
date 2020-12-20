@@ -11,12 +11,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 //import org.bukkit.event.entity.PlayerDeathEvent;
 //import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
         import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Team;
 
-        import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TagListener implements Listener {
@@ -28,7 +31,7 @@ public class TagListener implements Listener {
 
     //game information
     private TagInfo tagInfo;
-    public List<Score> scoreList = new ArrayList<>();
+    //public List<Score> scoreList = new ArrayList<>();
     public List<String> playerList = new ArrayList<>();
 
     public TagListener(GameEvents plugin) {
@@ -50,21 +53,36 @@ public class TagListener implements Listener {
             obj = plugin.mainScoreboard.registerNewObjective("playtag","dummy","おに");
         }
 
+        String tagger = tagInfo.taggerTeam.getName();
+        String escape = tagInfo.escapeTeam.getName();
         for(Player p : Bukkit.getOnlinePlayers()){
-            if(tagInfo.taggerTeam.getName().equals(plugin.mainboardManager.getPlayerTeam(p).getName())){
+            String player_team = plugin.mainboardManager.getPlayerTeam(p).getName();
+            if(player_team.equals(tagger)){
                 playerList.add(p.getName());
                 p.teleport(tagInfo.taggerSpawn);
                 p.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
-            } else {
-                p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
+                setScore(p);
             }
-            Score score = obj.getScore(p.getName());
-            score.setScore(100);
-            scoreList.add(score);
+            else if(player_team.equals(escape)){
+                p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
+                setScore(p);
+            }
             p.sendTitle(ChatColor.AQUA+"鬼ごっこ", "ゲームスタート",20,20,20);
-            p.setGameMode(GameMode.ADVENTURE);
         }
     }
+    private void setScore(Player p){
+        Score score = obj.getScore(p.getName());
+        score.setScore(100);
+        p.setGameMode(GameMode.ADVENTURE);
+    }
+/*
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        String player_name = e.getPlayer().getName();
+        if(obj.getScore(player_name).isScoreSet()){
+            obj.getScore(player_name);
+        }
+    }*/
 
     @EventHandler
     public void onHit(EntityDamageByEntityEvent e) {
@@ -72,13 +90,22 @@ public class TagListener implements Listener {
             Player whoWasHit = (Player) e.getEntity();
             Player whoHit = (Player) e.getDamager();
             e.setDamage(0);
-            if(playerList.contains(whoHit.getName())){
+            if(playerList.contains(whoHit.getName()) && !playerList.contains(whoWasHit.getName())){
                 setWhoWasHit(whoWasHit);
                 setWhoHit(whoHit);
                 Bukkit.broadcastMessage("鬼が"+whoHit.getName()+"から"+whoWasHit.getName()+"に変わりました。");
             }
         }
     }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e){
+        String player_name = e.getPlayer().getName();
+        if(obj.getScore(player_name).isScoreSet()){
+            obj.getScore(player_name).setScore(0);
+        }
+    }
+
     public void sendResult(){
         for(Player p : Bukkit.getOnlinePlayers()){
             p.sendTitle(ChatColor.AQUA+"鬼ごっこ", "～ゲーム終了～",20,50,20);
@@ -91,15 +118,20 @@ public class TagListener implements Listener {
     }
 
     public void deinitListener(){
-        actionBar.deinitActionbar();
-        actionBar = null;
-        for(Player p : Bukkit.getOnlinePlayers()){
-            p.sendTitle("ありがとうございました", "お疲れさまでした",20,40,20);
+        if(actionBar!=null){
+            actionBar.deinitActionbar();
+            actionBar = null;
         }
-        plugin.mainScoreboard.getObjective("playtag").unregister();
+        if(obj!=null){
+            obj.unregister();
+            obj = null;
+        }
         if(listenable){
             HandlerList.unregisterAll(this);
             listenable = false;
+        }
+        for(Player p : Bukkit.getOnlinePlayers()){
+            p.sendTitle("ありがとうございました", "お疲れさまでした",20,40,20);
         }
     }
 
