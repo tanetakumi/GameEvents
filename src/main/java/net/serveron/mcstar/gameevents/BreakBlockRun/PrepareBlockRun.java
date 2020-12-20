@@ -37,7 +37,7 @@ public class PrepareBlockRun implements Listener {
             ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
             if(itemMeta!=null && itemMeta.hasDisplayName()){
                 if(itemMeta.getDisplayName().equals(ChatColor.GOLD+"ステージ場所")){
-                    plugin.blockRun.locationDecision(e.getBlock().getLocation());
+                    plugin.blockRun.locationDecision(e.getBlock().getLocation().clone().add(0,1,0));
                     e.setCancelled(true);
                     player.sendMessage("開始位置をセットしました。ステージ作成コマンド\n"
                             +"　/cg blockrun construct <長さ>");
