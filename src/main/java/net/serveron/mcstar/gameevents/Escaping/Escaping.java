@@ -39,9 +39,9 @@ public class Escaping {
     public boolean ready(){
         if(progress == 1){
             if(escapingInfo.startable()){
-                if(escapingListener!=null){
-                    escapingListener.deinitListener();
-                    escapingListener = null;
+                if(prepareEscaping!=null){
+                    prepareEscaping.deinitListener();
+                    prepareEscaping = null;
                 }
                 escapingListener = new EscapingListener(plugin);
                 progress = 2;

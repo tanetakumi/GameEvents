@@ -33,6 +33,7 @@ public class BlockRunListener implements Listener {
             if(gameInfo.team.hasEntry(p.getName())){
                 entryPlayer.add(p.getName());
                 p.teleport(startPos);
+                p.setGameMode(GameMode.ADVENTURE);
             }
         }
         Bukkit.broadcastMessage(entryPlayer.size()+"人参加");

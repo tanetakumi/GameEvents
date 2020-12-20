@@ -49,6 +49,7 @@ public class PrepareEscaping implements Listener {
     public void deinitListener(){
         targetPlayer.getInventory().clear(0);
         targetPlayer.getInventory().clear(1);
+        targetPlayer = null;
         HandlerList.unregisterAll(this);
     }
 
