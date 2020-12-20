@@ -73,6 +73,9 @@ public class Escaping {
             prepareEscaping.deinitListener();
             prepareEscaping = null;
         }
+        if(escapingInfo!=null) {
+            escapingInfo = null;
+        }
         progress = 0;
     }
 }

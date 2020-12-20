@@ -57,10 +57,13 @@ public class EscapingListener implements Listener {
                 if(team.getName().equals(tagger)){
                     taggerList.add(p.getName());
                     p.teleport(escapingInfo.taggerSpawn);
+                    p.setGameMode(GameMode.ADVENTURE);
+                    p.setWalkSpeed(0.2f);
                 }
                 else if(team.getName().equals(escape)){
                     p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
                     escapeList.add(p.getName());
+                    p.setGameMode(GameMode.ADVENTURE);
                 }
             }
 
@@ -89,6 +92,7 @@ public class EscapingListener implements Listener {
             Player whoHit = (Player) e.getDamager();
             e.setDamage(0);
             if(taggerList.contains(whoHit.getName()) && escapeList.contains(whoWasHit.getName())){
+                whoWasHit.teleport(escapingInfo.captureSpawn);
                 escapeList.remove(whoWasHit.getName());
                 score.setScore(escapeList.size());
                 Bukkit.broadcastMessage(whoWasHit.getName()+"がハンターにつかまりました");

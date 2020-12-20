@@ -56,17 +56,20 @@ public class TagListener implements Listener {
         String tagger = tagInfo.taggerTeam.getName();
         String escape = tagInfo.escapeTeam.getName();
         for(Player p : Bukkit.getOnlinePlayers()){
-            String player_team = plugin.mainboardManager.getPlayerTeam(p).getName();
-            if(player_team.equals(tagger)){
-                playerList.add(p.getName());
-                p.teleport(tagInfo.taggerSpawn);
-                p.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
-                setScore(p);
+            Team team = plugin.mainScoreboard.getEntryTeam(p.getName());
+            if(team!=null){
+                if(team.getName().equals(tagger)){
+                    playerList.add(p.getName());
+                    p.teleport(tagInfo.taggerSpawn);
+                    p.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
+                    setScore(p);
+                }
+                else if(team.getName().equals(escape)){
+                    p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
+                    setScore(p);
+                }
             }
-            else if(player_team.equals(escape)){
-                p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
-                setScore(p);
-            }
+
             p.sendTitle(ChatColor.AQUA+"鬼ごっこ", "ゲームスタート",20,20,20);
         }
     }

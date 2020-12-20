@@ -136,7 +136,7 @@ public class GameCommand implements CommandExecutor, TabCompleter {
                                 plugin.escaping = new Escaping(plugin);
                                 plugin.escaping.prepare(player);
                                 player.sendMessage("逃走中の準備をします。最初のコマンド↓\n"
-                                        +"/cg escaping set <時間(秒)> <鬼チーム> <逃走チーム>");
+                                        +"/cg escaping set <時間(秒)> <ハンターチーム> <逃走者チーム>");
                             } else {
                                 player.sendMessage("コマンド /cg escaping prepare");
                             }
