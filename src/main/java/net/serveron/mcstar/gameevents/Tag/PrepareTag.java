@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class PrepareTag implements Listener {
     private final GameEvents plugin;
-    private String targetPlayer;
+    private Player targetPlayer;
 
     public PrepareTag(GameEvents plugin){
         this.plugin = plugin;
@@ -21,7 +21,7 @@ public class PrepareTag implements Listener {
 
     public void initListener(Player player){
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        this.targetPlayer = player.getName();
+        this.targetPlayer = player;
 
         ItemStack item = new ItemStack(Material.STICK,1);
         ItemMeta im = item.getItemMeta();
@@ -33,7 +33,7 @@ public class PrepareTag implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e){
         Player player = e.getPlayer();
-        if(player.getName().equals(targetPlayer)){
+        if(player.getName().equals(targetPlayer.getName())){
             ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
             if(itemMeta!=null && itemMeta.hasDisplayName()){
                 if(itemMeta.getDisplayName().equals(ChatColor.GOLD+"おにのスポーン位置")){
@@ -46,6 +46,7 @@ public class PrepareTag implements Listener {
     }
 
     public void deinitListener(){
+        targetPlayer.getInventory().clear(0);
         targetPlayer = null;
         HandlerList.unregisterAll(this);
     }

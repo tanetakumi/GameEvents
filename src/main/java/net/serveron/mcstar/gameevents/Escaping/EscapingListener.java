@@ -1,20 +1,20 @@
-package net.serveron.mcstar.gameevents.Tag;
+package net.serveron.mcstar.gameevents.Escaping;
 
-//import net.serveron.mcstar.teamevent.PlayTag.ActionBar;
 import net.serveron.mcstar.gameevents.GameEvents;
 import net.serveron.mcstar.gameevents.Timer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-//import org.bukkit.event.entity.PlayerDeathEvent;
-//import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-        import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
@@ -22,70 +22,68 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TagListener implements Listener {
+public class EscapingListener implements Listener {
+    public GameEvents plugin;
 
-    private final GameEvents plugin;
     private Timer actionBar;
     public Objective obj;
     private boolean listenable = false;
 
-    //game information
-    private TagInfo tagInfo;
-    //public List<Score> scoreList = new ArrayList<>();
-    public List<String> playerList = new ArrayList<>();
+    private Score score;
 
-    public TagListener(GameEvents plugin) {
+    private EscapingInfo escapingInfo;
+    public List<String> taggerList = new ArrayList<>();
+    public List<String> escapeList = new ArrayList<>();
+
+    public EscapingListener(GameEvents plugin) {
         this.plugin = plugin;
     }
 
     //Team1 おにチーム　Team2 逃走チーム
-    public void initListener(TagInfo tagInfo){
+    public void initListener(EscapingInfo escapingInfo){
+        this.escapingInfo = escapingInfo;
+
         if(!listenable){
             plugin.getServer().getPluginManager().registerEvents(this, plugin);
             listenable = true;
         }
-        this.tagInfo = tagInfo;
+        startTimer(escapingInfo.gameTime);
 
-        startTimer(tagInfo.gameTime);
-
-        obj = plugin.mainScoreboard.getObjective("playtag");
-        if(obj==null){
-            obj = plugin.mainScoreboard.registerNewObjective("playtag","dummy","おに");
-        }
-
-        String tagger = tagInfo.taggerTeam.getName();
-        String escape = tagInfo.escapeTeam.getName();
+        String tagger = escapingInfo.taggerTeam.getName();
+        String escape = escapingInfo.escapeTeam.getName();
         for(Player p : Bukkit.getOnlinePlayers()){
             Team team = plugin.mainScoreboard.getEntryTeam(p.getName());
             if(team!=null){
                 if(team.getName().equals(tagger)){
-                    playerList.add(p.getName());
-                    p.teleport(tagInfo.taggerSpawn);
-                    p.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
-                    setScore(p);
+                    taggerList.add(p.getName());
+                    p.teleport(escapingInfo.taggerSpawn);
+                    p.setGameMode(GameMode.ADVENTURE);
+                    p.setWalkSpeed(0.2f);
                 }
                 else if(team.getName().equals(escape)){
                     p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
-                    setScore(p);
+                    escapeList.add(p.getName());
+                    p.setGameMode(GameMode.ADVENTURE);
                 }
             }
 
-            p.sendTitle(ChatColor.AQUA+"鬼ごっこ", "ゲームスタート",20,20,20);
+            p.sendTitle(ChatColor.AQUA+"逃走中", "ゲームスタート",20,20,20);
         }
+
+        obj = plugin.mainScoreboard.getObjective("escaping");
+        if(obj==null){
+            obj = plugin.mainScoreboard.registerNewObjective("escaping","dummy","逃走中");
+        }
+        score = obj.getScore("残りの逃走者");
+        score.setScore(escapeList.size());
+        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
-    private void setScore(Player p){
-        Score score = obj.getScore(p.getName());
-        score.setScore(100);
-        p.setGameMode(GameMode.ADVENTURE);
-    }
-/*
+
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
-        String player_name = e.getPlayer().getName();
-        if(obj.getScore(player_name).isScoreSet()){
-            obj.getScore(player_name);
-        }
-    }*/
+        e.getPlayer().teleport(escapingInfo.captureSpawn);
+    }
 
     @EventHandler
     public void onHit(EntityDamageByEntityEvent e) {
@@ -93,10 +91,14 @@ public class TagListener implements Listener {
             Player whoWasHit = (Player) e.getEntity();
             Player whoHit = (Player) e.getDamager();
             e.setDamage(0);
-            if(playerList.contains(whoHit.getName()) && !playerList.contains(whoWasHit.getName())){
-                setWhoWasHit(whoWasHit);
-                setWhoHit(whoHit);
-                Bukkit.broadcastMessage("鬼が"+whoHit.getName()+"から"+whoWasHit.getName()+"に変わりました。");
+            if(taggerList.contains(whoHit.getName()) && escapeList.contains(whoWasHit.getName())){
+                whoWasHit.teleport(escapingInfo.captureSpawn);
+                escapeList.remove(whoWasHit.getName());
+                score.setScore(escapeList.size());
+                Bukkit.broadcastMessage(whoWasHit.getName()+"がハンターにつかまりました");
+                if(escapeList.size()==0){
+                    sendResult();
+                }
             }
         }
     }
@@ -104,16 +106,29 @@ public class TagListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e){
         String player_name = e.getPlayer().getName();
-        if(obj.getScore(player_name).isScoreSet()){
-            obj.getScore(player_name).setScore(0);
+        if(escapeList.contains(player_name)){
+            escapeList.remove(player_name);
+            score.setScore(escapeList.size());
         }
     }
 
     public void sendResult(){
-        for(Player p : Bukkit.getOnlinePlayers()){
-            p.sendTitle(ChatColor.AQUA+"鬼ごっこ", "～ゲーム終了～",20,50,20);
+
+        if(escapeList.size()==0){
+            for(Player p : Bukkit.getOnlinePlayers()){
+                p.sendTitle(ChatColor.AQUA+"ゲーム終了", "～全員がつかまりました～",20,50,20);
+            }
+        } else {
+            for(Player p : Bukkit.getOnlinePlayers()){
+                p.sendTitle(ChatColor.AQUA+"ゲーム終了", "",20,50,20);
+            }
+            for(String player : escapeList){
+                score = obj.getScore(player);
+                score.setScore(100);
+                obj.setDisplayName("優勝プレイヤー");
+            }
+            //obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
-        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         if(listenable){
             HandlerList.unregisterAll(this);
             listenable = false;
@@ -148,20 +163,22 @@ public class TagListener implements Listener {
         };
         actionBar.runTaskTimer(plugin,5,20);
     }
-
+/*
     private void setWhoHit(Player p){
-        tagInfo.escapeTeam.addEntry(p.getName());
+        escapingInfo.escapeTeam.addEntry(p.getName());
         playerList.remove(p.getName());
         p.getInventory().setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
     }
 
     private void setWhoWasHit(Player p){
-        tagInfo.taggerTeam.addEntry(p.getName());
+        escapingInfo.taggerTeam.addEntry(p.getName());
         playerList.add(p.getName());
 
-        p.teleport(tagInfo.taggerSpawn);
+        p.teleport(escapingInfo.taggerSpawn);
         p.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
         Score score = obj.getScore(p.getName());
-        score.setScore(score.getScore()-1);
+        score.setScore(score.get
     }
+
+ */
 }

@@ -63,13 +63,13 @@ public class BlockRunStudium {
         for (int i = 1; i < r - 1; i++) {
             Location l = startLoc.clone().add(i, 5, 1);
             l.getBlock().setType(Material.AIR);
-            Location l2 = startLoc.clone().add(i, 5, r-1);
+            Location l2 = startLoc.clone().add(i, 5, r-2);
             l2.getBlock().setType(Material.AIR);
         }
         for (int k = 1; k < r - 1; k++) {
             Location l = startLoc.clone().add(1, 5, k);
             l.getBlock().setType(Material.AIR);
-            Location l2 = startLoc.clone().add(r-1, 5, k);
+            Location l2 = startLoc.clone().add(r-2, 5, k);
             l2.getBlock().setType(Material.AIR);
         }
     }

@@ -68,6 +68,9 @@ public class Tag {
             prepareTag.deinitListener();
             prepareTag = null;
         }
+        if(tagInfo!=null){
+            tagInfo = null;
+        }
         progress = 0;
     }
 }

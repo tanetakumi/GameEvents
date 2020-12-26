@@ -4,6 +4,7 @@ package net.serveron.mcstar.gameevents;
 import net.serveron.mcstar.gameevents.BreakBlockRun.BlockRun;
 import net.serveron.mcstar.gameevents.BreakBlockRun.BlockRunListener;
 import net.serveron.mcstar.gameevents.Command.GameCommand;
+import net.serveron.mcstar.gameevents.Escaping.Escaping;
 import net.serveron.mcstar.gameevents.Tag.Tag;
 import net.serveron.mcstar.gameevents.Tag.TagListener;
 import net.serveron.mcstar.gameevents.TeamBattle.TeamBattleListener;
@@ -23,6 +24,7 @@ public final class GameEvents extends JavaPlugin {
 
     TeamBattleListener teamBattleListener;
     public Tag tag;
+    public Escaping escaping;
     public BlockRun blockRun;
 
     @Override
@@ -53,6 +55,8 @@ public final class GameEvents extends JavaPlugin {
             return "tag";
         } else if(blockRun!=null){
             return "blockrun";
+        } else if(escaping!=null){
+            return "escaping";
         } else {
             return "none";
         }
