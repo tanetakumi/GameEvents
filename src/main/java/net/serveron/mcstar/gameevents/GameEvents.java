@@ -21,7 +21,7 @@ public final class GameEvents extends JavaPlugin {
     public MainboardManager mainboardManager;
     public Scoreboard mainScoreboard;
     public List<TeamInfo> teamInfoList = new ArrayList<>();
-
+//dsad
     TeamBattleListener teamBattleListener;
     public Tag tag;
     public Escaping escaping;
