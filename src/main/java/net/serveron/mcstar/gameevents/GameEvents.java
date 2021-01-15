@@ -45,9 +45,14 @@ public final class GameEvents extends JavaPlugin {
             tag = null;
         }
         if(blockRun!=null){
-            blockRun.onStart();
+            blockRun.onFinish();
             blockRun = null;
         }
+        if(escaping!=null){
+            escaping.onFinish();
+            escaping = null;
+        }
+
     }
 
     public String currentGame(){
